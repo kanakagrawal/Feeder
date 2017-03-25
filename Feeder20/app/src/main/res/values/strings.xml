@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Acad App</string>
+    <string name="edit_message_user">Username</string>
+    <string name="edit_message_pass">Password</string>
+    <string name="edit_message_repass">Retype Password</string>
+    <string name="button_register">Register and Sign in</string>
+    <string name="text_sign">Sign Up</string>
+    <string name="text_login">Login</string>
+    <string name="name">FEEDER 20</string>
+    <string name="button_send">Submit</string>
+    <string name="title_activity_log">Login Page</string>
+    <string name="title_activity_sign">Signup Page</string>
+    <string name="customize">Customize</string>
+    <string name="show_dialog">Dialog</string>
+    <string name="feedback">Feedback Form</string>
+    <string name="logout">Log Out</string>
+    <string name="timeline">Timeline</string>
+    <string name="preference_file_key">File</string>
+    <string name="student">Student</string>
+    <string name="student_default">defaultStudent</string>
+    <string name="refresh">Refresh</string>
+
+</resources>

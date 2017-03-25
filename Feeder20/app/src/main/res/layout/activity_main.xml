@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name"
+        android:id="@+id/textView"
+        android:textColor="#000066"
+        android:textSize="35dp"
+        android:layout_marginBottom="31dp"
+        android:layout_above="@+id/progressBar2"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="@string/text_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@android:drawable/alert_dark_frame"
+        android:visibility="visible"
+        android:onClick="Clicklog"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="175dp" />
+
+
+</RelativeLayout>
