@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Courses</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-pills navbar-inverse">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'feeder:instructor' instructor.username %}">Home</a></li>
+                    <li><a href="{% url 'feeder:addFeedback' instructor.username %}">Add New Feedback</a></li>
+                    <li class="active"><a href="{% url 'feeder:addDeadline' instructor.username %}">Add Assignment Deadlines</a></li>
+                    <li><a href="{% url 'feeder:viewFeedback' instructor.username %}">View Feedback</a></li>
+                    <li><a href="{% url 'feeder:viewDeadline' instructor.username %}">View Deadlines</a></li>
+                    <li><a href="{% url 'feeder:instructorlogout' instructor.username %}">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
+            <form action="{% url 'feeder:addDeadline' instructor.username %}" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    {% if field.errors %} <p style="color: rgb(255,0,0)">{{field.errors}}</p>{% endif %}
+                    {{ field.label_tag }} {{ field }}
+                    {% if field.help_text %}
+                    <p class="help">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div align="center">
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

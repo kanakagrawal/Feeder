@@ -1,0 +1,124 @@
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from .models import Instructor, Admin, Course, Feedback, Student
+from .forms import CourseForm
+from django.urls import reverse
+from django.template import loader
+import csv
+# from somewhere import handle_csv_student_file
+# Create your views here.
+
+def admin(request):
+	if(request.method == 'POST'):
+		try:
+			admin = Admin.objects.get(username=request.POST['username'])
+		except (KeyError, Admin.DoesNotExist):
+			# Redisplay the login form.
+			context = { 'error_message': "Incorrect username or password." }
+			return render(request, 'feeder/admin_login.html', context)
+		if(admin.password == request.POST['password']):
+			# template = loader.get_template('feeder/adminpage.html')
+			context = { 'admin': admin }
+			return render(request, 'feeder/adminpage.html',context)
+		else:
+	        	context={ 'error_message': "Incorrect username or password." }
+	        	return render(request, 'feeder/admin_login.html', context)
+	else:
+		return render(request,'feeder/admin_login.html')
+
+def adminpage(request):
+	return render(request, 'feeder/adminpage.html')
+
+def runningcourses(request):
+	admin = Admin.objects.get(username="admin")
+	context = {'admin' : admin}
+	return render(request,'feeder/runningcourses.html',context)
+
+def handle_csv_student_file(f):
+	for chunk in f.chunks():
+		print(chunk)
+
+def addcourse(request):
+	if request.method == 'POST':
+		form = CourseForm(request.POST,request.FILES)
+		if form.is_valid() and (Course.objects.filter(course_code=request.POST["course_code"]).exists()==False):
+			admin = Admin.objects.get(username='admin')	
+			code = request.POST["course_code"]
+			name = request.POST["course_name"]
+			Sem = request.POST["semester"]
+			Year = request.POST["year"]
+			i = request.POST["instructor"]
+			instructor = Instructor.objects.get(id=i)
+			midsem_date = request.POST["midsem_date"]
+			endsem_date = request.POST["endsem_date"]
+			c = Course(course_name=name,course_code=code,instructor=instructor,admin=Admin.objects.get(username='admin'),semester=Sem,year=Year)
+			c.save()
+			midsem = Feedback(feedback_name = "Midsem Feedback", deadline_date = midsem_date, course = c, admin=admin)
+			midsem.midsem()
+			midsem.save()
+			endsem = Feedback(feedback_name = "Endsem Feedback", deadline_date = endsem_date, course = c, admin=admin)
+			endsem.save()
+			handle_csv_student_file(request.FILES['docfile'])
+			# with open(docfile) as csvfile:
+			#     readCSV = csv.reader(csvfile, delimiter=',')
+			#     for row in readCSV:
+			#     	name = row[0]
+			#     	rollno = row[1]
+			#     	password = row[2]
+			#     	email_id = row[3]
+			#     	s = Student(name=name,email_id=email_id,password=password,rollnumber=rollno)
+			#     	s.save()
+			#     	s.courses.add(c)
+			#     	s.save()
+			context = { 'admin': admin }
+			# template = loader.get_template('feeder/adminpage.html')
+			return HttpResponseRedirect(reverse('feeder:adminpage'))
+	else:
+		form = CourseForm()
+	admin = Admin.objects.get(username="admin")
+	context = {'admin' : admin,"form":form}
+	return render(request,'feeder/addcourse.html',context)
+
+def instructor_login(request):
+	if request.method == 'POST':
+		try:
+			selected_instructor = Instructor.objects.get(username=request.POST['username'])
+		except (KeyError, Instructor.DoesNotExist):
+			# Redisplay the login form.
+			context = { 'error_message': "Incorrect username or password." }
+			return render(request, 'feeder/instructor_login.html', context)
+		else:
+			if(selected_instructor.password == request.POST['password']):
+				return HttpResponseRedirect(reverse('feeder:instructor', args=(selected_instructor.username,)))	
+			else:
+				# Redisplay the login form.
+		        	context={
+		       	 		'error_message': "Incorrect username or password.",
+		        	}
+		        	return render(request, 'feeder/instructor_login.html', context)
+	else:
+		return render(request, 'feeder/instructor_login.html')
+
+def instructor(request,instructor):
+	print(instructor)
+	selected_instructor = get_object_or_404(Instructor,username=instructor)
+	# selected_instructor = Instructor.objects.get(username=instructor)
+	context = { 'instructor' : selected_instructor}
+	return render(request, 'feeder/instructorpage.html',context)
+
+def addFeedback(request, instructor):
+	selected_instructor = Instructor.objects.get(username=instructor)
+	context = { 'instructor' : selected_instructor, 'i':range(3) ,'j':range(0)}
+	return render(request, 'feeder/addFeedback.html',context)
+
+def viewFeedback(request, instructor):
+	selected_instructor = Instructor.objects.get(username=instructor)
+	return HttpResponse(selected_instructor.username)
+
+def addDeadline(request, instructor):
+	selected_instructor = Instructor.objects.get(username=instructor)
+	return HttpResponse(selected_instructor.username)
+
+def viewDeadline(request, instructor):
+	selected_instructor = Instructor.objects.get(username=instructor)
+	return HttpResponse(selected_instructor.username)

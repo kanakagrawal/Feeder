@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Login | Instructor</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+        <meta name="google-signin-client_id" content="490633133823-jfubgrpdgund5d7ccstsqsaetub8rsc1.apps.googleusercontent.com">
+        <style>
+          .nav-tabs li {
+              width: 50%;
+            }
+        </style>
+  </head>
+  <body>
+    <div class="container">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Instructor Login</h1>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="{% url 'feeder:instructor_login' %}">Login</a></li>
+                <li><a href="{% url 'feeder:instructor_register' %}">Register</a></li>
+            </ul>
+            <br>
+            <form action="{% url 'feeder:instructor_login' %}" method="post">
+                {% csrf_token %}
+                {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+                <div class = "form-group">
+                    <input type="text" class="form-control" placeholder="Instructor's Username" required="" name="username" id="username"/>
+                </div>
+                <div class = "form-group">
+                <input type="password" class="form-control" placeholder="Password" required="" name="password" id = "password"/>
+                </div>
+                <div align="center">
+                    <button type="submit" class="btn btn-success">Log In</button>
+                </div>
+                <br><br>
+                <div align="center">
+                    <div id="my-signin2" data-onsuccess="onSignIn"></div><br><br>
+                    <fb:login-button size="xlarge" scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+                </div>
+            </form> 
+        </div>
+    </div>
+    <form id = "social" action="{% url 'feeder:instructor_register' %}" method="post">
+        {% csrf_token %}
+        <input maxlength="30" name="name" type="hidden" value="34" required />
+        <input maxlength="30" name="username" type="hidden" required />
+        <input maxlength="30" name="email_id" type="hidden" required />
+        <input maxlength="20" name="password" type="hidden" required />
+        <input maxlength="20" name="reenter_password" type="hidden" required />
+        <input maxlength="20" name="social" type="hidden" value="facebook" required />
+    </form>
+</body>
+</html>
+
+<script>
+    function onSuccess(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        x = document.getElementById("social");
+        x.name.value = profile.getName();
+        x.username.value = "google"+profile.getId();
+        x.email_id.value = profile.getEmail();
+        x.password.value = profile.getId();
+        x.reenter_password.value = profile.getId();
+        x.social.value = "google";
+        x.submit();
+    }
+    function onFailure(error) {
+      console.log(error);
+    }
+    function renderButton() {
+      gapi.signin2.render('my-signin2', {
+        'scope': 'profile email',
+        'width': 240,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSuccess,
+        'onfailure': onFailure
+      });
+    }
+    
+
+
+////        Facebook
+  function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    if (response.status === 'connected') {
+        createOrLoginInstructor();
+    }
+  }
+
+
+  //called on pressing button
+ function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '211970655905105',
+        cookie     : true,  // enable cookies to allow the server to access 
+                            // the session
+        xfbml      : true,  // parse social plugins on this page
+        version    : 'v2.8' // use graph api version 2.8
+      });
+
+  };
+
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  function createOrLoginInstructor(){
+    FB.api('/me', { locale: 'en_US', fields: 'name, email' }, 
+            function(response) {
+                x = document.getElementById("social");
+                x.name.value = response.name;
+                x.username.value = "facebook"+response.id;
+                x.email_id.value = response.email;
+                x.password.value = response.id;
+                x.reenter_password.value = response.id;
+                x.social.value = "facebook";
+                x.submit();
+    });
+  }
+</script>

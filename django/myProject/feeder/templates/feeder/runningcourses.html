@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Courses</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-pills navbar-inverse">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'feeder:adminpage' %}">Home</a></li>
+                    <li class="active"><a href="{% url 'feeder:runningcourses' %}">Existing Courses</a></li>
+                    <li><a href="{% url 'feeder:addcourse' %}">Add Courses</a></li>
+                    <li><a href="{% url 'feeder:adminlogout' %}">Log out</a></li>
+                </ul>
+            </div>
+        </nav>
+  		<div class = "table-responsive">
+  			<table class = "table table-hover">
+  				<tr>
+  					<th>Course Code</th>
+  					<th>Course Name</th>
+  					<th>Instructor</th>
+  					<th>Time Period</th>
+                    <th></th>
+  				</tr>
+  				{% for course in admin.course_set.all %}
+  				<tr>
+  					<td>{{ course.course_code }}</td>
+  					<td>{{ course.course_name }}</td>
+  					<td>{% for instructor in course.instructor.all %} {{instructor.name}} <br> {% endfor %}</td>
+  					<td>{{ course.semester }} {{ course.year }}</td>
+                     <td><button type="submit" class="btn btn-danger"><a style="color: rgb(255,255,255)" href="{% url 'feeder:deleteCourse' course.pk %}">Delete</a></button></td>
+  				</tr>
+  				{% endfor %}  				
+			</table>
+  		</div>
+    </body>
+</html>

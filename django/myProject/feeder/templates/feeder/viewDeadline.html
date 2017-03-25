@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Courses</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-pills navbar-inverse">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'feeder:instructor' instructor.username %}">Home</a></li>
+                    <li><a href="{% url 'feeder:addFeedback' instructor.username %}">Add New Feedback</a></li>
+                    <li><a href="{% url 'feeder:addDeadline' instructor.username %}">Add Assignment Deadlines</a></li>
+                    <li><a href="{% url 'feeder:viewFeedback' instructor.username %}">View Feedback</a></li>
+                    <li class="active"><a href="{% url 'feeder:viewDeadline' instructor.username %}">View Deadlines</a></li>
+                    <li><a href="{% url 'feeder:instructorlogout' instructor.username %}">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+    <div class="container">
+        <div class="col-md-10">
+            <ul class="nav nav-tabs">
+                <li style="width:50%" class="active"><a href="{% url 'feeder:viewDeadline' instructor.username %}">Assignment Deadlines</a></li>
+                <li style="width:50%" ><a href="{% url 'feeder:viewFeedbackDeadline' instructor.username %}">Feedback Deadlines</a></li>
+            </ul>
+            <br>
+        </div>
+    </div>
+        <div class="col-sm-6 col-md-6 col-lg-6">
+        <h3 align="center">Deadline Completed</h3>
+        <div class = "table-responsive">
+            <table class = "table table-hover">
+                <tr>
+                    <th>Course Code</th>
+                    <th>Particular Name</th>
+                    <th>Submission Date</th>
+                    <th>Submission Time</th>
+                    <th></th>
+                </tr>
+                {% for course in instructor.course_set.all %}
+                    {% for deadline in course.deadline_set.all %}
+                    {% if deadline.is_due == False %}
+                <tr>
+                    <td>{{ deadline.course.course_code }}</td>
+                    <td>{{ deadline.assignment_name }}</td>
+                    <td>{{ deadline.deadline_date }}</td>
+                    <td>{{ deadline.deadline_time }}</td>
+                    <td><button type="submit" class="btn btn-danger"><a style="color: rgb(255,255,255)" href="{% url 'feeder:deleteDeadline' deadline.pk instructor.username %}">Delete</a></button></td>
+                </tr>
+                    {% endif %}
+                {% endfor %}        
+                {% endfor %}                
+            </table>
+        </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-6">
+        <h3 align="center">Deadline Due </h3>
+        <div class = "table-responsive">
+            <table class = "table table-hover">
+                <tr>
+                    <th>Course Code</th>
+                    <th>Particular Name</th>
+                    <th>Submission Date</th>
+                    <th>Submission Time</th>
+                    <th></th>
+                </tr>
+                {% for course in instructor.course_set.all %}
+                    {% for deadline in course.deadline_set.all %}
+                    {% if deadline.is_due %}
+                <tr>
+                    <td>{{ deadline.course.course_code }}</td>
+                    <td>{{ deadline.assignment_name }}</td>
+                    <td>{{ deadline.deadline_date }}</td>
+                    <td>{{ deadline.deadline_time }}</td>
+                    <td><button type="submit" class="btn btn-danger"><a style="color: rgb(255,255,255)" href="{% url 'feeder:deleteDeadline' deadline.pk instructor.username %}">Delete</a></button></td>
+                </tr>
+                    {% endif %}
+                {% endfor %}        
+                {% endfor %}                
+            </table>
+        </div>
+        </div>
+    </body>
+</html>
